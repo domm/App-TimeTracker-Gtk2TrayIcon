@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 # ABSTRACT: run App::TimeTracker::Gtk2TrayIcon
+# PODNAME: tracker_gtk_trayicon.pl
 
 use App::TimeTracker::Gtk2TrayIcon;
 App::TimeTracker::Gtk2TrayIcon->run;
