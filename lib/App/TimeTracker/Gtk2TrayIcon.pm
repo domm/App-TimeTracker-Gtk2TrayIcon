@@ -2,59 +2,68 @@ package App::TimeTracker::Gtk2TrayIcon;
 use 5.010;
 use strict;
 use warnings;
+our $VERSION = "1.000";
+# ABSTRACT: Show TimeTracker status in a GTK tray applet
+
 use Gtk2 -init;
 use AnyEvent;
-use App::TimeTracker;
+use App::TimeTracker::Proto;
 use App::TimeTracker::Data::Task;
 use Gtk2::TrayIcon;
 use FindBin qw($Bin);
+use File::ShareDir qw(module_file);
 
-my $storage_location = App::TimeTracker->storage_location;
+sub run {
 
-my $window= Gtk2::TrayIcon->new("test");
-my $eventbox = Gtk2::EventBox->new;
-my $img= Gtk2::Image->new_from_file("$Bin/lazy.png");
-$eventbox->add($img);
+    my $storage_location = App::TimeTracker::Proto->new->home;
 
-my $current;
-my $t = AnyEvent->timer(after => 0, interval => 5, cb => sub {
-    my $task = App::TimeTracker::Task->get_current($storage_location);
-    if ($task) {
-        $img->set_from_file("$Bin/busy.png");
-        $current = $task->project.$task->nice_tags;
-    }
-    else {
-        $img->set_from_file("$Bin/lazy.png");
-        $current = 'nothing';
-    }
-});
+    my $lazy = -e 'share/lazy.png' ? 'share/lazy.png' : module_file(__PACKAGE__,"lazy.png");
+    my $busy = -e 'share/busy.png' ? 'share/busy.png' : module_file(__PACKAGE__,"busy.png");
+    my $img= Gtk2::Image->new_from_file($lazy);
+    my $window= Gtk2::TrayIcon->new(__PACKAGE__);
+    my $eventbox = Gtk2::EventBox->new;
+    $eventbox->add($img);
 
+    my $current;
+    my $t = AnyEvent->timer(after => 0, interval => 5, cb => sub {
+        my $task = App::TimeTracker::Data::Task->current($storage_location);
+        if ($task) {
+            $img->set_from_file($busy);
+            $current = $task->say_project_tags;
+        }
+        else {
+            $img->set_from_file($lazy);
+            $current = 'nothing';
+        }
+    });
 
+    $eventbox->signal_connect( 'enter-notify-event' => sub {
+        unless ($current eq 'nothing') {
 
-$eventbox->signal_connect( 'enter-notify-event' => sub { 
-    unless ($current eq 'nothing') {
+            my $dialog = Gtk2::MessageDialog->new ($window,
+                [qw/modal destroy-with-parent/],
+                'other',
+                'none',
+                $current
+            );
     
-        my $dialog = Gtk2::MessageDialog->new ($window,
-            [qw/modal destroy-with-parent/],
-            'other',
-            'none',
-            $current
-        );
-    
-        $dialog->set_decorated (0);
-        $dialog->set_gravity ('south-west');
+            $dialog->set_decorated (0);
+            $dialog->set_gravity ('south-west');
 
-        my $t = AnyEvent->timer(after => 5, cb => sub {
+            my $t = AnyEvent->timer(after => 5, cb => sub {
+                $dialog->destroy;
+            });
+            my $retval = $dialog->run;
             $dialog->destroy;
-        });			
-        my $retval = $dialog->run;
-        $dialog->destroy;
-    }
-});
+        }
+    });
 
-$window->add($eventbox);
-$window->show_all;
+    $window->add($eventbox);
+    $window->show_all;
 
+    Gtk2->main;
+}
 
-Gtk2->main;
+1;
 
+__END__
