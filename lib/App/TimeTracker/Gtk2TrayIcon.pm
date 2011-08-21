@@ -11,14 +11,14 @@ use App::TimeTracker::Proto;
 use App::TimeTracker::Data::Task;
 use Gtk2::TrayIcon;
 use FindBin qw($Bin);
-use File::ShareDir qw(module_file);
+use File::ShareDir qw(dist_file);
 
 sub run {
 
     my $storage_location = App::TimeTracker::Proto->new->home;
 
-    my $lazy = -e 'share/lazy.png' ? 'share/lazy.png' : module_file(__PACKAGE__,"lazy.png");
-    my $busy = -e 'share/busy.png' ? 'share/busy.png' : module_file(__PACKAGE__,"busy.png");
+    my $lazy = -e 'share/lazy.png' ? 'share/lazy.png' : dist_file('App-TimeTracker-Gtk2TrayIcon','lazy.png');
+    my $busy = -e 'share/busy.png' ? 'share/busy.png' : dist_file('App-TimeTracker-Gtk2TrayIcon','busy.png');
     my $img= Gtk2::Image->new_from_file($lazy);
     my $window= Gtk2::TrayIcon->new(__PACKAGE__);
     my $eventbox = Gtk2::EventBox->new;
