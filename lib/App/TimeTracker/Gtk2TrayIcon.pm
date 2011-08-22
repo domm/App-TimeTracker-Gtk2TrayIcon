@@ -13,7 +13,7 @@ use Gtk2::TrayIcon;
 use FindBin qw($Bin);
 use File::ShareDir qw(dist_file);
 
-sub run {
+sub init {
 
     my $storage_location = App::TimeTracker::Proto->new->home;
 
@@ -71,8 +71,6 @@ sub run {
 
     $window->add($eventbox);
     $window->show_all;
-
-    Gtk2->main;
 }
 
 1;
