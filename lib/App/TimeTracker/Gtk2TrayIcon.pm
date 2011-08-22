@@ -76,3 +76,13 @@ sub init {
 1;
 
 __END__
+
+=head1 DESCRIPTION
+
+Backend for L<tracker_gtk_trayicon.pl>
+
+=method init
+
+Initialize the GTK app.
+
+
