@@ -5,7 +5,7 @@ use warnings;
 our $VERSION = "1.000";
 # ABSTRACT: Show TimeTracker status in a GTK tray applet
 
-use Gtk2 -init;
+use Gtk2;
 use AnyEvent;
 use App::TimeTracker::Proto;
 use App::TimeTracker::Data::Task;
@@ -25,6 +25,7 @@ sub init {
         -e 'share/busy.png'
         ? 'share/busy.png'
         : dist_file( 'App-TimeTracker-Gtk2TrayIcon', 'busy.png' );
+    Gtk2->init;
     my $img      = Gtk2::Image->new_from_file($lazy);
     my $window   = Gtk2::TrayIcon->new(__PACKAGE__);
     my $eventbox = Gtk2::EventBox->new;
