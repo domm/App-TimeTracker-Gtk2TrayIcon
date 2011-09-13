@@ -2,7 +2,7 @@ package App::TimeTracker::Gtk2TrayIcon;
 use 5.010;
 use strict;
 use warnings;
-our $VERSION = "1.001";
+our $VERSION = "1.002";
 # ABSTRACT: Show TimeTracker status in a GTK tray applet
 
 use Gtk2;
