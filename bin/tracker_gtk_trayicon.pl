@@ -7,8 +7,7 @@ use warnings;
 # PODNAME: tracker_gtk_trayicon.pl
 
 use App::TimeTracker::Gtk2TrayIcon;
-App::TimeTracker::Gtk2TrayIcon->init;
-Gtk2->main;
+App::TimeTracker::Gtk2TrayIcon->init('run');
 
 __END__
 

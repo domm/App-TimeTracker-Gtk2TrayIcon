@@ -14,7 +14,7 @@ use FindBin qw($Bin);
 use File::ShareDir qw(dist_file);
 
 sub init {
-
+    my ($class, $run) = @_;
     my $storage_location = App::TimeTracker::Proto->new->home;
 
     my $lazy =
@@ -47,11 +47,9 @@ sub init {
                 $current = 'nothing';
             }
         } );
-
     $eventbox->signal_connect(
         'enter-notify-event' => sub {
             unless ( $current eq 'nothing' ) {
-
                 my $dialog =
                     Gtk2::MessageDialog->new( $window,
                     [qw/modal destroy-with-parent/],
@@ -69,9 +67,9 @@ sub init {
                 $dialog->destroy;
             }
         } );
-
     $window->add($eventbox);
     $window->show_all;
+    Gtk2->main if $run;
 }
 
 1;
